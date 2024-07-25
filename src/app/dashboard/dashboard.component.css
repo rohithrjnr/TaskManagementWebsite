@@ -1,35 +1,19 @@
-.task {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* Adds space between input fields */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  margin-bottom: 20px; /* Space between tasks */
+.cards{
+    padding-bottom: 10 px ;
+}
+.category{
+    padding: 10px;
 }
 
-.add-task-button {
-    background-color: #27ae60 !important; /* Green background */
-    color: #ffffff !important; /* White text */
-    border-radius: 50px !important; /* Fully rounded button */
-    padding: 10px 20px !important; /* Adjusted padding for better appearance */
-    font-size: 14px !important;
-    align-self: flex-end;
-    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth transition */
-    border: none !important; /* Remove default border */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 100px; /* Adjust as necessary */
+    border: 1px dashed #ccc; /* Optional, for visual feedback */
+    padding: 10px;
   }
   
-  .add-task-button:hover {
-    background-color: #218c54 !important; /* Darker green on hover */
-    transform: scale(1.05); /* Slightly increase size on hover */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Increase shadow on hover */
-    cursor: pointer; /* Change cursor to pointer on hover */
+  mat-card {
+    margin-bottom: 10px;
   }
-  
-  .add-task-button:active {
-    background-color: #1e7b4b !important; /* Even darker green on active click */
-    transform: scale(1); /* Reset size on click */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduce shadow on click */
-  }
-  

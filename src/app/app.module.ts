@@ -15,6 +15,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { HeaderComponent } from './header/header.component';
 import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog/confirm-delete-dialog.component';
 import { MatOptionModule } from '@angular/material/core';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 
 @NgModule({
   declarations: [
@@ -35,7 +37,8 @@ import { MatOptionModule } from '@angular/material/core';
     FormsModule,
     MatFormFieldModule, 
     MatInputModule ,
-    MatOptionModule
+    MatOptionModule,
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]

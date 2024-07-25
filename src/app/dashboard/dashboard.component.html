@@ -1,37 +1,59 @@
 <div style="padding: 20px;">
-  <h1>Dashboard</h1>
+    <h1>Dashboard</h1>
   
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Add New Task</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-form-field class="task" appearance="fill">
-        <mat-label>Title</mat-label>
-        <input matInput [(ngModel)]="newTask.title" placeholder="Task Title">
-      </mat-form-field>
-      <mat-form-field class="task" appearance="fill">
-        <mat-label>Description</mat-label>
-        <textarea matInput [(ngModel)]="newTask.description" placeholder="Task Description"></textarea>
-      </mat-form-field>
-      <button mat-raised-button class="add-task-button" (click)="addTask()">Add Task</button>
-    </mat-card-content>
-  </mat-card>
-  
-  <div style="margin-top: 20px;">
-    <mat-card *ngFor="let task of tasks">
+    <mat-card>
       <mat-card-header>
-        <mat-card-title>{{ task.title }}</mat-card-title>
-        <button mat-icon-button color="primary" (click)="editTask(task)">
-        <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="confirmDelete(task.id!)">
-          <mat-icon>delete</mat-icon>
-        </button>
+        <mat-card-title>Add New Task</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p>{{ task.description }}</p>
+        <mat-form-field class="task" appearance="fill">
+          <mat-label>Title</mat-label>
+          <input matInput [(ngModel)]="newTask.title" placeholder="Task Title">
+        </mat-form-field>
+        <mat-form-field class="task" appearance="fill">
+          <mat-label>Description</mat-label>
+          <textarea matInput [(ngModel)]="newTask.description" placeholder="Task Description"></textarea>
+        </mat-form-field>
+        <button mat-raised-button class="add-task-button" (click)="addTask()">Add Task</button>
       </mat-card-content>
     </mat-card>
+  
+    <div style="margin-top: 20px;">
+      <mat-card *ngFor="let category of categories">
+        <mat-card-header>
+          <mat-card-title>{{ category }}</mat-card-title>
+          <button mat-icon-button color="primary" (click)="renameCategory(category)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteCategory(category)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-header>
+        <mat-card-content class="cards">
+          <div cdkDropList [cdkDropListData]="getTasksByCategory(category)" (cdkDropListDropped)="drop($event)" [id]="category">
+            <mat-card *ngFor="let task of getTasksByCategory(category)" cdkDrag [cdkDragData]="task">
+              <mat-card-header>
+                <mat-card-title>{{ task.title }}</mat-card-title>
+                <button mat-icon-button color="primary" (click)="editTask(task)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="confirmDelete(task.id!)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </mat-card-header>
+              <mat-card-content>
+                <p>{{ task.description }}</p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-card-content>
+      </mat-card>
+  
+      <mat-form-field class="category" appearance="fill">
+        <mat-label>New Category</mat-label>
+        <input matInput [(ngModel)]="newCategoryName" placeholder="Category Name">
+        <button mat-raised-button color="primary" (click)="addCategory()">Add Category</button>
+      </mat-form-field>
+    </div>
   </div>
-</div>
+  
