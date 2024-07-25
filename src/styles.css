@@ -1,8 +1,93 @@
+/* Overall Site Styling */
 body {
-    font-family: Roboto, Arial, sans-serif;
+    font-family: 'Arial', sans-serif !important;
+    background-color: #445a6b !important; /* Dark background for a modern look */
+    color: #f5f6f6 !important; /* Light text color for contrast */
+    margin: 0 !important;
+    padding: 0 !important;
   }
   
+  /* Header Styling */
+  header {
+    background-color: #0abde3 !important; /* Bright blue for the header */
+    color: #ffffff !important; /* White text color for the header */
+    padding: 16px !important; /* Padding inside the header */
+    text-align: center !important; /* Center-align text in the header */
+  }
+  
+  /* Container Styling */
+  .container {
+    max-width: 100% !important; /* Maximum width of the container */
+    margin: 20px auto !important; /* Center-align the container */
+    padding: 16px !important; /* Padding inside the container */
+    background-color: #ffffff !important; /* White background for content area */
+    border-radius: 8px !important; /* Rounded corners for a softer look */
+    box-shadow: 0 4px 8px rgba(59, 55, 55, 0.1) !important; /* Subtle shadow for depth */
+  }
+  
+  /* Form Field Styling */
+  .mat-form-field {
+    width: 100% !important; /* Full width for better alignment */
+    margin-bottom: 16px !important; /* Space between form fields */
+  }
+  
+  /* Label Styling */
+  .mat-form-field .mat-label {
+    color: #ffffff !important; /* White color for better contrast */
+  }
+  
+  /* Card Styling */
+  .mat-card {
+    background-color: #2c3e50 !important; /* Dark card background */
+    color: #ecf0f1 !important; /* Light text color */
+    padding: 16px !important; /* Padding inside cards */
+    border-radius: 8px !important; /* Rounded corners */
+    margin-bottom: 16px !important; /* Space between cards */
+    position: relative !important; /* Position relative for absolute positioning of the delete button */
+  }
+  
+  /* Card Title Styling */
+  .mat-card-title {
+    color: #ffffff !important; /* White color for better visibility */
+  }
+  
+  /* Button Styling */
+  .mat-raised-button {
+    background-color: #3498db !important; /* Blue background for buttons */
+    color: #ffffff !important; /* White text color for buttons */
+    border-radius: 4px !important; /* Slightly rounded corners */
+    padding: 8px 16px !important; /* Padding for better spacing */
+    font-size: 14px !important; /* Standard font size */
+  }
+  
+  /* Button Hover State */
+  .mat-raised-button:hover {
+    background-color: #2980b9 !important; /* Darker blue on hover */
+  }
+  
+  /* Delete Button Styling */
+  button.mat-icon-button {
+    position: absolute !important;
+    padding: 10%; /* Position absolute to move it to the far right */
+    right: 16px !important; /* Distance from the right edge */
+    top: 16px !important; /* Distance from the top edge */
+    color: #e74c3c !important; /* Red color for the delete icon */
+  }
+  
+  /* Icon Styling */
+  .mat-icon {
+    font-size: 24px !important; /* Standard size for icons */
+  }
+  
+  /* Heading Styling */
   h1 {
-    margin: 0;
+    font-size: 24px !important; /* Standard font size for headings */
+    margin: 0 !important; /* Remove default margin */
+  }
+  
+  /* Paragraph Styling */
+  p {
+    font-size: 16px !important; /* Standard font size for paragraphs */
+    line-height: 1.5 !important; /* Improved line height for readability */
   }
   
