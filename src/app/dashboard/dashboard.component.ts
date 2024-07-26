@@ -157,32 +157,25 @@ export class DashboardComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<Task[]>): void {
-    const previousContainerId = event.previousContainer.id;
-    const newContainerId = event.container.id;
-    
-    const movedTask = event.item.data as Task;
-  
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      // Handle moving the item to a new list
+      const movedTask = event.item.data as Task;
+      const previousCategory = event.previousContainer.id;
+      const newCategory = event.container.id;
+
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
-      
-      movedTask.category = newContainerId;
-      
+
+      movedTask.category = newCategory;
       this.saveTasks();
     }
-    
-    this.updateTasksCategory(previousContainerId, newContainerId);
-    this.saveTasks();
-    this.loadCategories();
-    this.loadTasks();
   }
+  
 
   getTasksByCategory(category: string): Task[] {
     return this.tasks.filter(task => task.category === category);

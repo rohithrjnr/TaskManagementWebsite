@@ -1,5 +1,11 @@
-.cards{
-    padding-bottom: 10 px ;
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+mat-card {
+  margin-bottom: 10px;
 }
 .category{
     padding: 10px;
@@ -14,6 +20,3 @@
     padding: 10px;
   }
   
-  mat-card {
-    margin-bottom: 10px;
-  }
