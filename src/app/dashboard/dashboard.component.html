@@ -23,9 +23,9 @@
     </mat-card-content>
   </mat-card>
 
-  <div style="margin-top: 20px; display: flex; flex-direction: column;">
+  <div style="margin-top: 20px; display: flex; flex-direction: column; padding-right: 10px;">
     <div cdkDropListGroup>
-      <mat-card *ngFor="let category of categories" style="margin-bottom: 20px;">
+      <mat-card *ngFor="let category of categories" style="margin-bottom: 20px; display: inline-flex; margin: 10px;">
         <mat-card-header>
           <mat-card-title>{{ category }}</mat-card-title>
           <button mat-icon-button color="primary" (click)="renameCategory(category)">
