@@ -16,6 +16,8 @@ import { HeaderComponent } from './header/header.component';
 import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog/confirm-delete-dialog.component';
 import { MatOptionModule } from '@angular/material/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TaskDetailComponent } from './task-detail/task-detail.component';
+import { MatTableModule } from '@angular/material/table';
 
 
 @NgModule({
@@ -23,7 +25,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     AppComponent,
     DashboardComponent,
     HeaderComponent,
-    ConfirmDeleteDialogComponent
+    ConfirmDeleteDialogComponent,
+    TaskDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -35,6 +38,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MatIconModule,
     MatDialogModule,
     FormsModule,
+    MatTableModule,
     MatFormFieldModule, 
     MatInputModule ,
     MatOptionModule,

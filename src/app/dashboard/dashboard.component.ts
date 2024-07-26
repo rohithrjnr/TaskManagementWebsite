@@ -7,7 +7,8 @@ export interface Task {
   id?: number;
   title: string;
   description: string;
-  category: any; 
+  category: string;
+  [key: string]: any; 
 }
 
 @Component({
@@ -18,7 +19,7 @@ export interface Task {
 export class DashboardComponent implements OnInit {
   tasks: Task[] = [];
   newTask: Task = { title: '', description: '', category: 'Category One' }; // Default category
-  categories: string[] = ['Category One']; // Default category
+  categories: string[] = ['Primary Task']; // Default category
   editMode: boolean = false;
   editTaskId: number | null = null;
   newCategoryName: any;
@@ -57,11 +58,11 @@ export class DashboardComponent implements OnInit {
       this.updateTask(this.editTaskId);
     } else {
       if (this.newTask.title && this.newTask.description) {
-        this.newTask.category = this.categories.length > 0 ? this.categories[0] : 'Category One';
+        this.newTask.category = this.categories.length > 0 ? this.categories[0] : 'Primary Task';
         this.newTask.id = new Date().getTime();
         this.tasks.push(this.newTask);
         this.saveTasks();
-        this.newTask = { title: '', description: '', category: this.categories.length > 0 ? this.categories[0] : 'Category One' };
+        this.newTask = { title: '', description: '', category: this.categories.length > 0 ? this.categories[0] : 'Primary Task' };
       }
     }
   }

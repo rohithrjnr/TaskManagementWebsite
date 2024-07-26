@@ -1,11 +1,11 @@
 <div style="padding: 20px;">
-
+  <mat-card>
   <mat-form-field class="category" appearance="fill" style="flex: 1 1 100%;">
     <mat-label>New Category</mat-label>
-    <input matInput [(ngModel)]="newCategoryName" placeholder="Category Name">
-    <button mat-raised-button color="primary" (click)="addCategory()">Add Category</button>
+    <input class="input" matInput [(ngModel)]="newCategoryName" placeholder="Category Name">
   </mat-form-field>
-
+  <button mat-raised-button class="add-category-button" (click)="addCategory()">Add Category</button>
+  </mat-card>
   <mat-card>
     <mat-card-header>
       <mat-card-title>Add New Task</mat-card-title>
@@ -13,11 +13,11 @@
     <mat-card-content>
       <mat-form-field class="task" appearance="fill">
         <mat-label>Title</mat-label>
-        <input matInput [(ngModel)]="newTask.title" placeholder="Task Title">
+        <input class="input" matInput [(ngModel)]="newTask.title" placeholder="Task Title">
       </mat-form-field>
       <mat-form-field class="task" appearance="fill">
         <mat-label>Description</mat-label>
-        <textarea matInput [(ngModel)]="newTask.description" placeholder="Task Description"></textarea>
+        <textarea class="input" matInput [(ngModel)]="newTask.description" placeholder="Task Description"></textarea>
       </mat-form-field>
       <button mat-raised-button class="add-task-button" (click)="addTask()">Add Task</button>
     </mat-card-content>
@@ -25,7 +25,7 @@
 
   <div style="margin-top: 20px; display: flex; flex-direction: column; padding-right: 10px;">
     <div cdkDropListGroup>
-      <mat-card *ngFor="let category of categories" style="margin-bottom: 20px; display: inline-flex; margin: 10px;">
+      <mat-card *ngFor="let category of categories" style="margin-bottom: 20px; position: sticky; display: inline-flex; margin: 10px;">
         <mat-card-header>
           <mat-card-title>{{ category }}</mat-card-title>
           <button mat-icon-button color="primary" (click)="renameCategory(category)">

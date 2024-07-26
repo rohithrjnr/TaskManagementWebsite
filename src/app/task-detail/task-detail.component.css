@@ -1,0 +1,16 @@
+.task-detail-container {
+    margin: 20px;
+  }
+  
+  .task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  table {
+    width: 100%;
+    margin-top: 20px;
+  }
+  

@@ -5,6 +5,8 @@ export interface Task {
   id?: number;
   title: string;
   description: string;
+  category: string;
+  [key: string]: any; 
 }
 
 @Injectable({

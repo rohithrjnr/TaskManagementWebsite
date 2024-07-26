@@ -1,0 +1,87 @@
+<div class="task-detail-container mat-elevation-z8">
+    <h2>Task Details</h2>
+    
+    <!-- Add Column Form -->
+    <div class="add-column-form">
+      <button mat-icon-button color="primary" (click)="showAddColumn = !showAddColumn">
+        <mat-icon>add</mat-icon>
+      </button>
+      <div *ngIf="showAddColumn">
+        <mat-form-field appearance="outline">
+          <mat-label>New Column Name</mat-label>
+          <input class="input" matInput [(ngModel)]="newColumnName" name="newColumnName" required>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="addColumn()">Add</button>
+      </div>
+    </div>
+  
+    <!-- Task Form -->
+    <form (ngSubmit)="addTask()" class="task-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Title</mat-label>
+        <input class="input" matInput id="title" [(ngModel)]="newTask.title" name="title" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <input class="input" matInput id="description" [(ngModel)]="newTask.description" name="description" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <input class="input" matInput id="category" [(ngModel)]="newTask.category" name="category" required>
+      </mat-form-field>
+      
+      <!-- Dynamically create input fields for new columns -->
+      <ng-container *ngFor="let column of displayedColumns">
+        <mat-form-field *ngIf="column !== 'title' && column !== 'description' && column !== 'category' && column !== 'actions'" appearance="outline">
+          <mat-label>{{ column | titlecase }}</mat-label>
+          <input class="input" matInput [(ngModel)]="newTask[column]" [name]="column" required>
+        </mat-form-field>
+      </ng-container>
+
+      <button mat-raised-button color="primary" type="submit">Add Task</button>
+    </form>
+  
+    <!-- Task Table -->
+    <table mat-table [dataSource]="tasks" class="mat-elevation-z8">
+      <!-- Dynamically create columns based on displayedColumns -->
+      <ng-container *ngFor="let column of displayedColumns">
+        <ng-container [matColumnDef]="column" *ngIf="column !== 'actions'">
+          <th mat-header-cell *matHeaderCellDef> {{ column | titlecase }} </th>
+          <td mat-cell *matCellDef="let task">
+            <ng-container *ngIf="editTaskId === task.id; else viewMode">
+              <input class="input" matInput [(ngModel)]="task[column]" [name]="column + '-' + task.id">
+            </ng-container>
+            <ng-template #viewMode>
+              {{ task[column] }}
+            </ng-template>
+          </td>
+        </ng-container>
+      </ng-container>
+  
+      <!-- Actions column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let task">
+          <ng-container *ngIf="editTaskId === task.id; else viewModeActions">
+            <button mat-icon-button color="primary" (click)="updateTask(task.id!)">
+              <mat-icon>save</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="editTask(null)">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </ng-container>
+          <ng-template #viewModeActions>
+            <button mat-icon-button color="primary" (click)="editTask(task)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteTask(task.id!)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-template>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</div>
