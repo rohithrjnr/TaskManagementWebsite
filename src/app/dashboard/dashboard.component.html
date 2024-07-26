@@ -1,10 +1,10 @@
 <div style="padding: 20px;">
   <mat-card>
-  <mat-form-field class="category" appearance="fill" style="flex: 1 1 100%;">
-    <mat-label>New Category</mat-label>
-    <input class="input" matInput [(ngModel)]="newCategoryName" placeholder="Category Name">
-  </mat-form-field>
-  <button mat-raised-button class="add-category-button" (click)="addCategory()">Add Category</button>
+    <mat-form-field class="category" appearance="fill" style="flex: 1 1 100%;">
+      <mat-label>New Category</mat-label>
+      <input class="input" matInput [(ngModel)]="newCategoryName" placeholder="Category Name">
+    </mat-form-field>
+    <button mat-raised-button class="add-category-button" (click)="addCategory()">Add Category</button>
   </mat-card>
   <mat-card>
     <mat-card-header>
@@ -19,10 +19,18 @@
         <mat-label>Description</mat-label>
         <textarea class="input" matInput [(ngModel)]="newTask.description" placeholder="Task Description"></textarea>
       </mat-form-field>
+      <div *ngFor="let column of additionalColumns">
+        <mat-form-field class="task" appearance="fill">
+          <mat-label>{{ column | titlecase }}</mat-label>
+          <input class="input" matInput [(ngModel)]="newTask[column]" placeholder="{{ column | titlecase }}">
+        </mat-form-field>
+      </div>
+      <button mat-icon-button (click)="addNewColumn()">
+        <mat-icon>add</mat-icon>
+      </button>
       <button mat-raised-button class="add-task-button" (click)="addTask()">Add Task</button>
     </mat-card-content>
   </mat-card>
-
   <div style="margin-top: 20px; display: flex; flex-direction: column; padding-right: 10px;">
     <div cdkDropListGroup>
       <mat-card *ngFor="let category of categories" style="margin-bottom: 20px; position: sticky; display: inline-flex; margin: 10px;">
@@ -45,7 +53,7 @@
           >
             <mat-card *ngFor="let task of getTasksByCategory(category)" cdkDrag [cdkDragData]="task">
               <mat-card-header>
-                <mat-card-title>{{ task.title }}</mat-card-title>
+                <mat-card-title><strong>Description:</strong>{{ task.title }}</mat-card-title>
                 <button mat-icon-button color="primary" (click)="editTask(task)">
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -54,14 +62,15 @@
                 </button>
               </mat-card-header>
               <mat-card-content>
-                <p>{{ task.description }}</p>
+                <p><strong>Description: </strong>{{ task.description }}</p>
+                <div *ngFor="let column of additionalColumns">
+                  <strong>{{ column | titlecase }}:</strong> {{ task[column] }}
+                </div>
               </mat-card-content>
             </mat-card>
           </div>
         </mat-card-content>
       </mat-card>
     </div>
-
-
   </div>
 </div>

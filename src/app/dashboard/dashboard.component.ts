@@ -20,6 +20,8 @@ export class DashboardComponent implements OnInit {
   tasks: Task[] = [];
   newTask: Task = { title: '', description: '', category: 'Category One' }; // Default category
   categories: string[] = ['Primary Task']; // Default category
+  additionalColumns: string[] = [];
+  newColumnName: string = '';
   editMode: boolean = false;
   editTaskId: number | null = null;
   newCategoryName: any;
@@ -29,6 +31,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loadTasks();
     this.loadCategories();
+    this.loadAdditionalColumns();
   }
 
   loadTasks(): void {
@@ -45,12 +48,23 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  loadAdditionalColumns(): void {
+    const storedColumns = localStorage.getItem('additionalColumns');
+    if (storedColumns) {
+      this.additionalColumns = JSON.parse(storedColumns);
+    }
+  }
+
   saveTasks(): void {
     localStorage.setItem('tasks', JSON.stringify(this.tasks));
   }
 
   saveCategories(): void {
     localStorage.setItem('categories', JSON.stringify(this.categories));
+  }
+
+  saveAdditionalColumns(): void {
+    localStorage.setItem('additionalColumns', JSON.stringify(this.additionalColumns));
   }
 
   addTask(): void {
@@ -66,6 +80,7 @@ export class DashboardComponent implements OnInit {
       }
     }
   }
+
   editTask(task: Task): void {
     this.newTask = { ...task };
     this.editMode = true;
@@ -96,17 +111,15 @@ export class DashboardComponent implements OnInit {
   deleteTask(taskId: number): void {
     this.tasks = this.tasks.filter(task => task.id !== taskId);
     this.saveTasks();
-    this.loadCategories();
-    this.loadTasks();
   }
-  deleteCategory(categoryToDelete: string): void {
 
+  deleteCategory(categoryToDelete: string): void {
     const confirmDelete = confirm(`Are you sure you want to delete the category "${categoryToDelete}"?`);
     if (confirmDelete) {
       this.categories = this.categories.filter(category => category !== categoryToDelete);
-  
+
       if (this.categories.length > 0) {
-        const newCategory = this.categories[0]; // Use the first category as the new category
+        const newCategory = this.categories[0]; 
         this.tasks.forEach(task => {
           if (task.category === categoryToDelete) {
             task.category = newCategory;
@@ -119,13 +132,12 @@ export class DashboardComponent implements OnInit {
           }
         });
       }
-  
+
       this.saveCategories();
       this.saveTasks();
-      this.loadCategories();
-      this.loadTasks();
     }
   }
+
   renameCategory(oldCategory: string): void {
     const newName = prompt('Enter new category name:', oldCategory);
     if (newName && newName.trim()) {
@@ -145,8 +157,6 @@ export class DashboardComponent implements OnInit {
       }
     });
     this.saveTasks();
-    this.loadTasks();
-    this.loadCategories();
   }
 
   addCategory(): void {
@@ -161,22 +171,25 @@ export class DashboardComponent implements OnInit {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      const movedTask = event.item.data as Task;
-      const previousCategory = event.previousContainer.id;
-      const newCategory = event.container.id;
-
+      const movedTask = event.previousContainer.data[event.previousIndex];
+      movedTask.category = event.container.id;
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
+    }
+    this.saveTasks();
+  }
 
-      movedTask.category = newCategory;
-      this.saveTasks();
+  addNewColumn(): void {
+    const newColumn = prompt('Enter new column name:');
+    if (newColumn && !this.additionalColumns.includes(newColumn)) {
+      this.additionalColumns.push(newColumn);
+      this.saveAdditionalColumns();
     }
   }
-  
 
   getTasksByCategory(category: string): Task[] {
     return this.tasks.filter(task => task.category === category);
