@@ -1,5 +1,10 @@
 <div style="padding: 20px;">
-  <h1>Dashboard</h1>
+
+  <mat-form-field class="category" appearance="fill" style="flex: 1 1 100%;">
+    <mat-label>New Category</mat-label>
+    <input matInput [(ngModel)]="newCategoryName" placeholder="Category Name">
+    <button mat-raised-button color="primary" (click)="addCategory()">Add Category</button>
+  </mat-form-field>
 
   <mat-card>
     <mat-card-header>
@@ -57,10 +62,6 @@
       </mat-card>
     </div>
 
-    <mat-form-field class="category" appearance="fill">
-      <mat-label>New Category</mat-label>
-      <input matInput [(ngModel)]="newCategoryName" placeholder="Category Name">
-      <button mat-raised-button color="primary" (click)="addCategory()">Add Category</button>
-    </mat-form-field>
+
   </div>
 </div>

@@ -124,4 +124,40 @@ body {
     font-size: 16px !important; /* Standard font size for paragraphs */
     line-height: 1.5 !important; /* Improved line height for readability */
   }
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
   
+  mat-card {
+    margin-bottom: 10px;
+  }
+  .category{
+      padding: 10px;
+  }
+  
+  .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 100px; /* Adjust as necessary */
+      border: 1px dashed #ccc; /* Optional, for visual feedback */
+      padding: 10px;
+    }
+    :host {
+      display: block;
+    }
+    
+    mat-card {
+      margin-bottom: 20px;
+    }
+    
+    mat-form-field.task {
+      width: 100%;
+    }
+    
+    mat-form-field.category {
+      width: calc(100% - 20px);
+      margin-top: 20px;
+    }
