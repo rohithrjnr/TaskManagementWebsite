@@ -20,7 +20,8 @@ import { TaskDetailComponent } from './task-detail/task-detail.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReactiveFormsModule } from '@angular/forms';
-
+import { TaskReportComponent } from './task-report/task-report.component';
+import { BaseChartDirective  } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     DashboardComponent,
     HeaderComponent,
     ConfirmDeleteDialogComponent,
-    TaskDetailComponent
+    TaskDetailComponent,
+    TaskReportComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +48,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatOptionModule,
     DragDropModule,
     MatAutocompleteModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BaseChartDirective
   ],
   providers: [],
   bootstrap: [AppComponent]
