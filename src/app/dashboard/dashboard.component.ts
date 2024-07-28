@@ -3,6 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { TaskService } from '../task.service';
 import { ConfirmDeleteDialogComponent } from '../confirm-delete-dialog/confirm-delete-dialog.component';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { FormControl } from '@angular/forms';
+import { startWith, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 export interface Task {
   id?: number;
@@ -21,6 +24,8 @@ export class DashboardComponent implements OnInit {
   tasks: Task[] = [];
   newTask: Task = { title: '', description: '', category: 'Primary Category' }; // Default category
   categories: string[] = ['Primary Task']; // Default category
+  categoryControl = new FormControl();
+  filteredCategories!: Observable<string[]>;
   additionalColumns: string[] = [];
   newColumnName: string = '';
   editMode: boolean = false;
@@ -34,6 +39,10 @@ export class DashboardComponent implements OnInit {
     this.loadCategories();
     this.taskService.getAdditionalColumns().subscribe(columns => this.additionalColumns = columns);
     this.loadAdditionalColumns();
+    this.filteredCategories = this.categoryControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this.filterCategories(value))
+    );
   }
 
   loadTasks(): void {
@@ -48,6 +57,11 @@ export class DashboardComponent implements OnInit {
     if (storedCategories) {
       this.categories = JSON.parse(storedCategories);
     }
+  }
+
+  filterCategories(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.categories.filter(category => category.toLowerCase().includes(filterValue));
   }
 
   loadAdditionalColumns(): void {
