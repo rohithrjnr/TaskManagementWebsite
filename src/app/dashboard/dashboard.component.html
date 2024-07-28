@@ -97,6 +97,8 @@
               </mat-card-header>
               <mat-card-content>
                 <p><strong>Description: </strong>{{ task.description }}</p>
+                <p><strong>Status: </strong>{{ task.status}}</p>
+                <p *ngIf="tester === 'tester'"><strong>Status: </strong>{{ task.assignedTo}}</p>
                 <div *ngFor="let column of additionalColumns">
                   <strong>{{ column | titlecase }}:</strong> {{ task[column] }}
                 </div>

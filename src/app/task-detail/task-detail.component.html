@@ -154,7 +154,7 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let task">
-        <ng-container *ngIf="editTaskId === task.id; else viewModeActions">
+        <ng-container *ngIf="editTaskId === task.id; else viewModeActions" [(ngModel)]="this.newTask">
           <button mat-icon-button color="primary" (click)="updateTask(task.id!)">
             <mat-icon>save</mat-icon>
           </button>

@@ -1,5 +1,5 @@
-<mat-toolbar color="primary" *ngIf="authService.isLoggedIn()">
-  <span>R&D Dashboard</span>
+<mat-toolbar color="primary" >
+  <span class="toolbar-title">R&D Dashboard</span>
   <nav>
     <ul>
       <li><a routerLink="/dashboard">Dashboard</a></li>
@@ -7,5 +7,5 @@
       <li><a routerLink="/task-report">Task Report</a></li>
     </ul>
   </nav>
-  <button mat-button (click)="logout()" style="margin-left:auto;">Logout</button>
+  <button mat-button (click)="logout()" class="logout-button">Logout</button>
 </mat-toolbar>
