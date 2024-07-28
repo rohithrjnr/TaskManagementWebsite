@@ -86,7 +86,7 @@ export class TaskService {
     this.savestatus(columns);
   }
 
-  private savecategory(columns: string[]): void {
+  public savecategory(columns: string[]): void {
     localStorage.setItem('categories', JSON.stringify(columns));
     this.categoriesSubject.next(columns);
   }

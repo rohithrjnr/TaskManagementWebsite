@@ -36,7 +36,7 @@
       </mat-form-field>
       <mat-form-field class="task" appearance="fill">
         <mat-label>Category</mat-label>
-        <input class="input" matInput [matAutocomplete]="autoCategory" [formControl]="categoryControl" placeholder="Category">
+        <input class="input" matInput [matAutocomplete]="autoCategory" [(ngModel)]="newTask.category" [formControl]="categoryControl" placeholder="Category">
         <mat-autocomplete #autoCategory="matAutocomplete">
           <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
             {{ category }}

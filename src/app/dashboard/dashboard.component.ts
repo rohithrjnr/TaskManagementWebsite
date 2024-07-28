@@ -114,9 +114,18 @@ export class DashboardComponent implements OnInit {
       this.updateTask(this.editTaskId);
     } else {
       if (this.newTask.title && this.newTask.description) {
-        this.newTask.category = this.categories.length > 0 ? this.categories[0] : 'Primary Task';
         this.newTask.id = new Date().getTime();
         this.tasks.push(this.newTask);
+
+        const oldCategory = JSON.parse(localStorage.getItem('categories')|| '[]');
+        let newCategory=this.newTask.category;
+        if(!oldCategory.includes(newCategory)){
+          oldCategory.push(newCategory);
+          this.taskService.savecategory(oldCategory);
+          this.filteredCategories = this.categoryControl.valueChanges.pipe(
+            startWith(''),
+            map(value => this.filterCategories(value)) );
+        }
         this.saveTasks();
         this.newTask = { title: '', description: '', category: this.categories.length > 0 ? this.categories[0] : 'Primary Task',status: this.status.length > 0 ? this.status[0] : 'Pending' };
       }
