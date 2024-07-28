@@ -12,6 +12,7 @@ export interface Task {
   title: string;
   description: string;
   category: string;
+  status: string;
   [key: string]: any; 
 }
 
@@ -22,26 +23,35 @@ export interface Task {
 })
 export class DashboardComponent implements OnInit {
   tasks: Task[] = [];
-  newTask: Task = { title: '', description: '', category: 'Primary Category' }; // Default category
+  newTask: Task = { title: '', description: '', category: 'Primary Category', status: 'Pending' }; // Default category
   categories: string[] = ['Primary Task']; // Default category
   categoryControl = new FormControl();
   filteredCategories!: Observable<string[]>;
+  status: string[] = ['Pending', 'Ongoing', 'Completed']; // Default status
+  statusControl = new FormControl();
+  filteredstatus!: Observable<string[]>;
   additionalColumns: string[] = [];
   newColumnName: string = '';
   editMode: boolean = false;
   editTaskId: number | null = null;
   newCategoryName: any;
+  newStatus: any;
 
   constructor(private taskService: TaskService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loadTasks();
     this.loadCategories();
+    this.loadStatus();
     this.taskService.getAdditionalColumns().subscribe(columns => this.additionalColumns = columns);
     this.loadAdditionalColumns();
     this.filteredCategories = this.categoryControl.valueChanges.pipe(
       startWith(''),
       map(value => this.filterCategories(value))
+    );
+    this.filteredstatus = this.statusControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this.filterstatus(value))
     );
   }
 
@@ -57,6 +67,18 @@ export class DashboardComponent implements OnInit {
     if (storedCategories) {
       this.categories = JSON.parse(storedCategories);
     }
+  }
+
+  loadStatus(): void {
+    const storedstatus = localStorage.getItem('status');
+    if (storedstatus) {
+      this.status = JSON.parse(storedstatus);
+    }
+  }
+
+  filterstatus(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.status.filter(status => status.toLowerCase().includes(filterValue));
   }
 
   filterCategories(value: string): string[] {
@@ -78,6 +100,10 @@ export class DashboardComponent implements OnInit {
   saveCategories(): void {
     localStorage.setItem('categories', JSON.stringify(this.categories));
   }
+  savestatus(): void {
+    localStorage.setItem('status', JSON.stringify(this.status));
+    this.loadStatus();
+  }
 
   saveAdditionalColumns(): void {
     localStorage.setItem('additionalColumns', JSON.stringify(this.additionalColumns));
@@ -92,7 +118,7 @@ export class DashboardComponent implements OnInit {
         this.newTask.id = new Date().getTime();
         this.tasks.push(this.newTask);
         this.saveTasks();
-        this.newTask = { title: '', description: '', category: this.categories.length > 0 ? this.categories[0] : 'Primary Task' };
+        this.newTask = { title: '', description: '', category: this.categories.length > 0 ? this.categories[0] : 'Primary Task',status: this.status.length > 0 ? this.status[0] : 'Pending' };
       }
     }
   }
@@ -108,7 +134,7 @@ export class DashboardComponent implements OnInit {
     if (taskIndex > -1) {
       this.tasks[taskIndex] = { ...this.newTask, id: taskId };
       this.saveTasks();
-      this.newTask = { title: '', description: '', category: 'Primary Category' }; // Reset with default category
+      this.newTask = { title: '', description: '', category: 'Primary Category' ,status: 'Pending'}; // Reset with default category
       this.editMode = false;
       this.editTaskId = null;
     }
@@ -183,6 +209,14 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+
+  addStatus(): void {
+    if (this.newStatus && !this.status.includes(this.newStatus)) {
+      this.status.push(this.newStatus);
+      this.savestatus();
+    }
+  }
+
   drop(event: CdkDragDrop<Task[]>): void {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -215,6 +249,18 @@ export class DashboardComponent implements OnInit {
         delete task[columnToRemove];
       });
       this.saveTasks();
+    }
+  }
+  isDefaultStatus(status: string): boolean {
+    return ['Pending', 'Ongoing', 'Completed'].includes(status);
+  }
+
+  removeStatus(index: number): void {
+    const columnToRemove = this.status[index];
+    const confirmRemove = confirm(`Are you sure you want to remove the status '${columnToRemove}'?`);
+    if (confirmRemove) {
+      this.taskService.removeStatus(columnToRemove);
+    this.loadStatus();
     }
   }
   getTasksByCategory(category: string): Task[] {

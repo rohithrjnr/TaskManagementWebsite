@@ -6,6 +6,7 @@ export interface Task {
   title: string;
   description: string;
   category: string;
+  status: string;
   [key: string]: any; 
 }
 
@@ -17,7 +18,7 @@ export class TaskService {
   private tasks: Task[] = [];
   private additionalColumnsSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   private categoriesSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-  private statusOptionsSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>(['Pending', 'Ongoing', 'Completed']);
+  private statusOptionsSubject: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
   constructor() { 
     this.loadAdditionalColumns();
@@ -77,6 +78,14 @@ export class TaskService {
     this.saveAdditionalColumns(columns);
   }
 
+  removeStatus(columnName: string): void {
+    const storedColumns = localStorage.getItem('status');
+    const initialColumns = storedColumns ? JSON.parse(storedColumns) : [];
+    const columns = initialColumns.filter((col: string) => col !== columnName);
+    console.log(columns)
+    this.savestatus(columns);
+  }
+
   private savecategory(columns: string[]): void {
     localStorage.setItem('categories', JSON.stringify(columns));
     this.categoriesSubject.next(columns);
@@ -85,6 +94,11 @@ export class TaskService {
   private saveAdditionalColumns(columns: string[]): void {
     localStorage.setItem('additionalColumns', JSON.stringify(columns));
     this.additionalColumnsSubject.next(columns);
+  }
+
+  private savestatus(columns: string[]): void {
+    localStorage.setItem('status', JSON.stringify(columns));
+    this.statusOptionsSubject.next(columns);
   }
 
   private loadAdditionalColumns(): void {

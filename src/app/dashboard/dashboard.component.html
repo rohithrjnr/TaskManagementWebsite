@@ -20,9 +20,24 @@
         <textarea class="input" matInput [(ngModel)]="newTask.description" placeholder="Task Description"></textarea>
       </mat-form-field>
       <mat-form-field class="task" appearance="fill">
+        <mat-label>Status</mat-label>
+        <input class="input" matInput [matAutocomplete]="autoStatus" [(ngModel)]="newStatus" [formControl]="statusControl" placeholder="Status">
+        <mat-autocomplete #autoStatus="matAutocomplete">
+          <mat-option *ngFor="let status of filteredstatus | async; let i=index;" [value]="status">
+            {{ status }}
+            <button *ngIf="!isDefaultStatus(status)" mat-icon-button (click)="removeStatus(i)">
+              <mat-icon>remove</mat-icon>
+            </button>
+          </mat-option>
+        </mat-autocomplete>
+        <button mat-icon-button (click)="addStatus()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </mat-form-field>
+      <mat-form-field class="task" appearance="fill">
         <mat-label>Category</mat-label>
-        <input class="input" matInput [matAutocomplete]="auto" [formControl]="categoryControl" placeholder="Category">
-        <mat-autocomplete #auto="matAutocomplete">
+        <input class="input" matInput [matAutocomplete]="autoCategory" [formControl]="categoryControl" placeholder="Category">
+        <mat-autocomplete #autoCategory="matAutocomplete">
           <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
             {{ category }}
           </mat-option>
