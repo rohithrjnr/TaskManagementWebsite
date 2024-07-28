@@ -11,16 +11,19 @@ import { Observable } from 'rxjs';
 })
 export class TaskDetailComponent implements OnInit {
   tasks: Task[] = [];
-  newTask: any = { title: '', description: '', category: 'Primary Category' }; // Default category
+  newTask: any = { title: '', description: '', category: 'Primary Category', status: 'Pending' }; // Default category and status
   editMode: boolean = false;
   editTaskId: number | null = null;
   additionalColumns: string[] = [];
   newColumnName: string = '';
   showAddColumn: boolean = false;
-  displayedColumns: string[] = ['title', 'description', 'category', 'actions'];
+  displayedColumns: string[] = ['title', 'description', 'category', 'status', 'actions'];
   categories: string[] = [];
   categoryControl = new FormControl();
   filteredCategories!: Observable<string[]>;
+  status: string[] = ['Pending', 'Ongoing', 'Completed'];
+  statusControl = new FormControl();
+  filteredStatus!: Observable<string[]>;
 
   constructor(private taskService: TaskService) { }
 
@@ -32,10 +35,15 @@ export class TaskDetailComponent implements OnInit {
     });
     this.loadAdditionalColumns();
     this.loadCategories();
-
+    this.loadStatus();
     this.filteredCategories = this.categoryControl.valueChanges.pipe(
       startWith(''),
       map(value => this.filterCategories(value))
+    );
+
+    this.filteredStatus = this.statusControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this.filterStatus(value))
     );
   }
 
@@ -57,12 +65,24 @@ export class TaskDetailComponent implements OnInit {
     return this.categories.filter(category => category.toLowerCase().includes(filterValue));
   }
 
+  loadStatus(): void {
+    const storedStatus = localStorage.getItem('status');
+    if (storedStatus) {
+      this.status = JSON.parse(storedStatus);
+    }
+  }
+
+  filterStatus(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.status.filter(status => status.toLowerCase().includes(filterValue));
+  }
+
   addTask(): void {
-    if (this.newTask.title && this.newTask.description) {
-      this.taskService.addTask(this.newTask);
-      this.newTask = { title: '', description: '', category: 'Primary Category' }; // Reset with default category
-      this.updateDisplayedColumns();
-      this.taskService.getTasks().subscribe(tasks => this.tasks = tasks);
+    if (this.newTask.title && this.newTask.description && this.newTask.status) {
+      this.taskService.addTask(this.newTask).subscribe(() => {
+        this.newTask = { title: '', description: '', category: 'Primary Category', status: 'Pending' }; // Reset with default category and status
+        this.taskService.getTasks().subscribe(tasks => this.tasks = tasks);
+      });
     }
   }
 
@@ -71,13 +91,12 @@ export class TaskDetailComponent implements OnInit {
     this.updateDisplayedColumns();
   }
 
-
   editTask(task: Task | null): void {
     if (task) {
       this.newTask = { ...task };
       this.editTaskId = task.id!;
     } else {
-      this.newTask = { title: '', description: '', category: 'Primary Category' }; // Reset with default category
+      this.newTask = { title: '', description: '', category: 'Primary Category', status: 'Pending' }; // Reset with default category and status
       this.editTaskId = null;
     }
   }
@@ -91,7 +110,7 @@ export class TaskDetailComponent implements OnInit {
     if (taskIndex > -1) {
       this.tasks[taskIndex] = { ...this.newTask, id: taskId };
       this.saveTasks();
-      this.newTask = { title: '', description: '', category: 'Primary Category' }; // Reset with default category
+      this.newTask = { title: '', description: '', category: 'Primary Category', status: 'Pending' }; // Reset with default category and status
       this.editTaskId = null;
     }
   }
@@ -113,14 +132,49 @@ export class TaskDetailComponent implements OnInit {
     const columnToRemove = this.additionalColumns[index];
     const confirmRemove = confirm(`Are you sure you want to remove the column '${columnToRemove}'?`);
     if (confirmRemove) {
-      this.taskService.removeColumn(columnToRemove);
+      this.additionalColumns.splice(index, 1);
       this.tasks.forEach(task => {
         delete task[columnToRemove];
       });
+      this.saveAdditionalColumns();
       this.saveTasks();
     }
   }
+
   private updateDisplayedColumns(): void {
-    this.displayedColumns = ['title', 'description', 'category', ...this.additionalColumns, 'actions'];
+    this.displayedColumns = ['title', 'description', 'category', 'status', ...this.additionalColumns, 'actions'];
+  }
+
+  isDefaultStatus(status: string): boolean {
+    return ['Pending', 'Ongoing', 'Completed'].includes(status);
+  }
+
+  removeStatus(index: number): void {
+    const statusToRemove = this.status[index];
+    const confirmRemove = confirm(`Are you sure you want to remove the status '${statusToRemove}'?`);
+    if (confirmRemove) {
+      this.status.splice(index, 1);
+      this.savestatus();
+      this.loadStatus();
+    }
+  }
+
+  savestatus(): void {
+    localStorage.setItem('status', JSON.stringify(this.status));
+    this.filteredStatus = this.statusControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this.filterStatus(value))
+    );
+  }
+
+  addStatus(): void {
+    if (this.newTask.status && !this.status.includes(this.newTask.status)) {
+      this.status.push(this.newTask.status);
+      this.savestatus();
+    }
+  }
+
+  clearLocalStorage(): void {
+    localStorage.clear();
   }
 }

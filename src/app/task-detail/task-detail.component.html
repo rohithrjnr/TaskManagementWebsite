@@ -20,12 +20,27 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Category</mat-label>
-      <input class="input" matInput [matAutocomplete]="auto" id="category" [(ngModel)]="newTask.category" name="category" required>
-      <mat-autocomplete #auto="matAutocomplete">
+      <input class="input" matInput [matAutocomplete]="autoCategory" id="category" [(ngModel)]="newTask.category" name="category" required>
+      <mat-autocomplete #autoCategory="matAutocomplete">
         <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
           {{ category }}
         </mat-option>
       </mat-autocomplete>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <input class="input" matInput [matAutocomplete]="autoStatus" id="status" [(ngModel)]="newTask.status" name="status" required>
+      <mat-autocomplete #autoStatus="matAutocomplete">
+        <mat-option *ngFor="let status of filteredStatus | async; let i=index" [value]="status">
+          {{ status }}
+          <button *ngIf="!isDefaultStatus(status)" mat-icon-button (click)="removeStatus(i)">
+            <mat-icon>remove</mat-icon>
+          </button>
+        </mat-option>
+      </mat-autocomplete>
+      <button mat-icon-button (click)="addStatus()">
+        <mat-icon>add</mat-icon>
+      </button>
     </mat-form-field>
     
     <!-- Dynamically create input fields for new columns -->
@@ -82,6 +97,19 @@
         </ng-template>
       </td>
     </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let task">
+            <ng-container *ngIf="editTaskId === task.id; else viewModeStatus">
+              <input class="input" matInput [(ngModel)]="task.status" name="status-{{task.id}}">
+            </ng-container>
+            <ng-template #viewModeStatus>
+              {{ task.status }}
+            </ng-template>
+          </td>
+        </ng-container>
 
     <!-- Dynamically create columns based on additionalColumns -->
     <ng-container *ngFor="let column of additionalColumns">
