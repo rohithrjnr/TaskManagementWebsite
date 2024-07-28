@@ -20,14 +20,22 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Category</mat-label>
-      <input class="input" matInput id="category" [(ngModel)]="newTask.category" name="category" required>
+      <input class="input" matInput [matAutocomplete]="auto" id="category" [(ngModel)]="newTask.category" name="category" required>
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
+          {{ category }}
+        </mat-option>
+      </mat-autocomplete>
     </mat-form-field>
     
     <!-- Dynamically create input fields for new columns -->
-    <ng-container *ngFor="let column of additionalColumns">
+    <ng-container *ngFor="let column of additionalColumns; let i=index;">
       <mat-form-field *ngIf="column !== 'title' && column !== 'description' && column !== 'category' && column !== 'actions'" appearance="outline">
         <mat-label>{{ column | titlecase }}</mat-label>
         <input class="input" matInput [(ngModel)]="newTask[column]" [name]="column" required>
+        <button mat-icon-button (click)="removeColumn(i)">
+          <mat-icon>remove</mat-icon>
+        </button>
       </mat-form-field>
     </ng-container>
 

@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { TaskService, Task } from '../task.service';
+import { FormControl } from '@angular/forms';
+import { startWith, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-task-detail',
@@ -15,6 +18,9 @@ export class TaskDetailComponent implements OnInit {
   newColumnName: string = '';
   showAddColumn: boolean = false;
   displayedColumns: string[] = ['title', 'description', 'category', 'actions'];
+  categories: string[] = [];
+  categoryControl = new FormControl();
+  filteredCategories!: Observable<string[]>;
 
   constructor(private taskService: TaskService) { }
 
@@ -25,6 +31,12 @@ export class TaskDetailComponent implements OnInit {
       this.updateDisplayedColumns();
     });
     this.loadAdditionalColumns();
+    this.loadCategories();
+
+    this.filteredCategories = this.categoryControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this.filterCategories(value))
+    );
   }
 
   loadAdditionalColumns(): void {
@@ -33,6 +45,16 @@ export class TaskDetailComponent implements OnInit {
       this.additionalColumns = JSON.parse(storedColumns);
       this.updateDisplayedColumns();
     }
+  }
+
+  loadCategories(): void {
+    const storedCategories = localStorage.getItem('categories');
+    this.categories = storedCategories ? JSON.parse(storedCategories) : ['Primary Category']; // Default category
+  }
+
+  filterCategories(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.categories.filter(category => category.toLowerCase().includes(filterValue));
   }
 
   addTask(): void {
@@ -95,12 +117,9 @@ export class TaskDetailComponent implements OnInit {
       this.tasks.forEach(task => {
         delete task[columnToRemove];
       });
-      this.additionalColumns.splice(index, 1);
       this.saveTasks();
-      this.saveAdditionalColumns();
     }
   }
-
   private updateDisplayedColumns(): void {
     this.displayedColumns = ['title', 'description', 'category', ...this.additionalColumns, 'actions'];
   }

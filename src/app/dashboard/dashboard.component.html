@@ -19,6 +19,10 @@
         <mat-label>Description</mat-label>
         <textarea class="input" matInput [(ngModel)]="newTask.description" placeholder="Task Description"></textarea>
       </mat-form-field>
+      <mat-form-field class="task" appearance="fill">
+        <mat-label>Category</mat-label>
+        <input class="input" matInput [(ngModel)]="newTask.category" placeholder="Category">
+      </mat-form-field>
       <div *ngFor="let column of additionalColumns;let i = index;">
         <mat-form-field class="task" appearance="fill">
           <mat-label>{{ column | titlecase }}</mat-label>

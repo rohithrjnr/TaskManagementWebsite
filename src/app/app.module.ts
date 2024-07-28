@@ -18,6 +18,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TaskDetailComponent } from './task-detail/task-detail.component';
 import { MatTableModule } from '@angular/material/table';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import { MatTableModule } from '@angular/material/table';
     MatFormFieldModule, 
     MatInputModule ,
     MatOptionModule,
-    DragDropModule
+    DragDropModule,
+    MatAutocompleteModule
   ],
   providers: [],
   bootstrap: [AppComponent]

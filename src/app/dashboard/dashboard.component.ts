@@ -19,7 +19,7 @@ export interface Task {
 })
 export class DashboardComponent implements OnInit {
   tasks: Task[] = [];
-  newTask: Task = { title: '', description: '', category: 'Category One' }; // Default category
+  newTask: Task = { title: '', description: '', category: 'Primary Category' }; // Default category
   categories: string[] = ['Primary Task']; // Default category
   additionalColumns: string[] = [];
   newColumnName: string = '';
@@ -94,7 +94,7 @@ export class DashboardComponent implements OnInit {
     if (taskIndex > -1) {
       this.tasks[taskIndex] = { ...this.newTask, id: taskId };
       this.saveTasks();
-      this.newTask = { title: '', description: '', category: 'Category One' }; // Reset with default category
+      this.newTask = { title: '', description: '', category: 'Primary Category' }; // Reset with default category
       this.editMode = false;
       this.editTaskId = null;
     }
@@ -130,7 +130,7 @@ export class DashboardComponent implements OnInit {
       } else {
         this.tasks.forEach(task => {
           if (task.category === categoryToDelete) {
-            task.category = 'Category One';
+            task.category = 'Primary Category';
           }
         });
       }
