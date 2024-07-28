@@ -22,6 +22,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TaskReportComponent } from './task-report/task-report.component';
 import { BaseChartDirective  } from 'ng2-charts';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { BaseChartDirective  } from 'ng2-charts';
     HeaderComponent,
     ConfirmDeleteDialogComponent,
     TaskDetailComponent,
-    TaskReportComponent
+    TaskReportComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,

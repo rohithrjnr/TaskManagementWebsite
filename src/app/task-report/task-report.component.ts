@@ -17,6 +17,8 @@ export class TaskReportComponent implements OnInit, AfterViewInit {
   // Pie Chart Data
   pieChartData: number[] = [];
   pieChartLabels: string[] = [];
+  pieChartData2: number[] = [];
+  pieChartLabels2: string[] = [];
   pieChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -68,6 +70,7 @@ export class TaskReportComponent implements OnInit, AfterViewInit {
       this.columns = this.columns.concat(this.getAdditionalColumns());
       this.generateReport(this.selectedColumn);
       this.generateCategoryReport();
+      this.generateStatusReport();
     });
   }
 
@@ -109,7 +112,17 @@ export class TaskReportComponent implements OnInit, AfterViewInit {
     this.pieChartData = Object.values(categoryCounts);
     this.drawPieChart();
   }
+  generateStatusReport(): void {
+    const statusCounts: { [key: string]: number } = {};
 
+    this.tasks.forEach(task => {
+      statusCounts[task.status] = (statusCounts[task.status] || 0) + 1;
+    });
+
+    this.pieChartLabels2 = Object.keys(statusCounts);
+    this.pieChartData2 = Object.values(statusCounts);
+    this.drawPieChart2();
+  }
   drawPieChart(): void {
     const ctx = document.getElementById('pieChart') as HTMLCanvasElement;
     new Chart(ctx, {
@@ -118,6 +131,23 @@ export class TaskReportComponent implements OnInit, AfterViewInit {
         labels: this.pieChartLabels,
         datasets: [{
           data: this.pieChartData,
+          backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(54, 162, 235, 0.6)'],
+          borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 206, 86, 1)', 'rgba(54, 162, 235, 1)'],
+          borderWidth: 1
+        }]
+      },
+      options: this.pieChartOptions
+    });
+  }
+
+  drawPieChart2(): void {
+    const ctx = document.getElementById('pieChart2') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: this.pieChartLabels2,
+        datasets: [{
+          data: this.pieChartData2,
           backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(54, 162, 235, 0.6)'],
           borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 206, 86, 1)', 'rgba(54, 162, 235, 1)'],
           borderWidth: 1

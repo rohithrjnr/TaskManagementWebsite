@@ -1,11 +1,11 @@
-<mat-toolbar color="primary">
-    <span>R&D Dashboard</span>
-    <nav>
-      <ul>
-        <li><a routerLink="/">Dashboard</a></li>
-        <li><a routerLink="/task-detail">Task Details</a></li>
-        <li><a routerLink="/task-report">Task Report</a></li>
-      </ul>
-    </nav>    
-  </mat-toolbar>
-  
+<mat-toolbar color="primary" *ngIf="authService.isLoggedIn()">
+  <span>R&D Dashboard</span>
+  <nav>
+    <ul>
+      <li><a routerLink="/dashboard">Dashboard</a></li>
+      <li><a routerLink="/task-detail">Task Details</a></li>
+      <li><a routerLink="/task-report">Task Report</a></li>
+    </ul>
+  </nav>
+  <button mat-button (click)="logout()" style="margin-left:auto;">Logout</button>
+</mat-toolbar>
