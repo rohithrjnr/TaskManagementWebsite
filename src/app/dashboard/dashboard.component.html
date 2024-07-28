@@ -21,27 +21,34 @@
       </mat-form-field>
       <mat-form-field class="task" appearance="fill">
         <mat-label>Status</mat-label>
-        <input class="input" matInput [matAutocomplete]="autoStatus" [(ngModel)]="newStatus" [formControl]="statusControl" placeholder="Status">
-        <mat-autocomplete #autoStatus="matAutocomplete">
-          <mat-option *ngFor="let status of filteredstatus | async; let i=index;" [value]="status">
+        <mat-select [(ngModel)]="newStatus" [formControl]="statusControl" placeholder="Status">
+          <mat-option *ngFor="let status of filteredstatus | async; let i=index" [value]="status">
             {{ status }}
-            <button *ngIf="!isDefaultStatus(status)" mat-icon-button (click)="removeStatus(i)">
+            <button *ngIf="!isDefaultStatus(status)" mat-icon-button (click)="removeStatus(i); $event.stopPropagation()">
               <mat-icon>remove</mat-icon>
             </button>
           </mat-option>
-        </mat-autocomplete>
+        </mat-select>
         <button mat-icon-button (click)="addStatus()">
           <mat-icon>add</mat-icon>
         </button>
       </mat-form-field>
+      
       <mat-form-field class="task" appearance="fill">
         <mat-label>Category</mat-label>
-        <input class="input" matInput [matAutocomplete]="autoCategory" [(ngModel)]="newTask.category" [formControl]="categoryControl" placeholder="Category">
-        <mat-autocomplete #autoCategory="matAutocomplete">
+        <mat-select [(ngModel)]="newTask.category" [formControl]="categoryControl" placeholder="Category">
           <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
             {{ category }}
           </mat-option>
-        </mat-autocomplete>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" *ngIf="tester === 'tester'">
+        <mat-label>AssignedTo</mat-label>
+        <mat-select class="input" [(ngModel)]="newTask.assignedTo" name="assignedTo" required>
+          <mat-option *ngFor="let assignedTo of filteredAssigned | async" [value]="assignedTo">
+            {{ assignedTo }}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
       <div *ngFor="let column of additionalColumns;let i = index;">
         <mat-form-field class="task" appearance="fill">

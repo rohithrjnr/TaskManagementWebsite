@@ -5,6 +5,7 @@ import { ConfirmDeleteDialogComponent } from '../confirm-delete-dialog/confirm-d
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { FormControl } from '@angular/forms';
 import { startWith, map } from 'rxjs/operators';
+import { AuthService } from '../auth.service';
 import { Observable } from 'rxjs';
 
 export interface Task {
@@ -13,6 +14,7 @@ export interface Task {
   description: string;
   category: string;
   status: string;
+  assignedTo: any;
   [key: string]: any; 
 }
 
@@ -23,26 +25,30 @@ export interface Task {
 })
 export class DashboardComponent implements OnInit {
   tasks: Task[] = [];
-  newTask: Task = { title: '', description: '', category: 'Primary Category', status: 'Pending' }; // Default category
+  newTask: Task = { title: '', description: '', category: 'Primary Category', status: 'Pending',assignedTo:'' }; // Default category
   categories: string[] = ['Primary Task']; // Default category
   categoryControl = new FormControl();
   filteredCategories!: Observable<string[]>;
   status: string[] = ['Pending', 'Ongoing', 'Completed']; // Default status
   statusControl = new FormControl();
+  assignedControl = new FormControl();
   filteredstatus!: Observable<string[]>;
   additionalColumns: string[] = [];
   newColumnName: string = '';
+  assigned: string[] = ['qa','tester','developer'];
   editMode: boolean = false;
   editTaskId: number | null = null;
   newCategoryName: any;
   newStatus: any;
-
-  constructor(private taskService: TaskService, public dialog: MatDialog) { }
+  filteredAssigned!: Observable<string[]>;
+  tester: any;
+  constructor(private taskService: TaskService, public dialog: MatDialog, private authService : AuthService) { }
 
   ngOnInit(): void {
     this.loadTasks();
     this.loadCategories();
     this.loadStatus();
+    this.loadAssigned();
     this.taskService.getAdditionalColumns().subscribe(columns => this.additionalColumns = columns);
     this.loadAdditionalColumns();
     this.filteredCategories = this.categoryControl.valueChanges.pipe(
@@ -53,6 +59,11 @@ export class DashboardComponent implements OnInit {
       startWith(''),
       map(value => this.filterstatus(value))
     );
+    this.filteredAssigned = this.assignedControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this.assignUser(value))
+    );
+    this.tester=this.authService.getCurrentUserType();
   }
 
   loadTasks(): void {
@@ -70,11 +81,23 @@ export class DashboardComponent implements OnInit {
   }
 
   loadStatus(): void {
-    const storedstatus = localStorage.getItem('status');
-    if (storedstatus) {
-      this.status = JSON.parse(storedstatus);
+    const storedStatus = localStorage.getItem('status');
+    if (storedStatus) {
+      this.status = JSON.parse(storedStatus);
     }
   }
+
+  assignUser(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.assigned.filter(assigned => assigned.toLowerCase().includes(filterValue));
+  }
+  loadAssigned(): void {
+    const storedStatus = localStorage.getItem('developers');
+    if (storedStatus) {
+      this.assigned = JSON.parse(storedStatus);
+    }
+  }
+
 
   filterstatus(value: string): string[] {
     const filterValue = value.toLowerCase();
@@ -102,7 +125,10 @@ export class DashboardComponent implements OnInit {
   }
   savestatus(): void {
     localStorage.setItem('status', JSON.stringify(this.status));
-    this.loadStatus();
+    this.filteredstatus = this.statusControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this.filterstatus(value))
+    );
   }
 
   saveAdditionalColumns(): void {
@@ -127,7 +153,7 @@ export class DashboardComponent implements OnInit {
             map(value => this.filterCategories(value)) );
         }
         this.saveTasks();
-        this.newTask = { title: '', description: '', category: this.categories.length > 0 ? this.categories[0] : 'Primary Task',status: this.status.length > 0 ? this.status[0] : 'Pending' };
+        this.newTask = { title: '', description: '', category: this.categories.length > 0 ? this.categories[0] : 'Primary Task',status: this.status.length > 0 ? this.status[0] : 'Pending',assignedTo:''  };
       }
     }
   }
@@ -143,7 +169,7 @@ export class DashboardComponent implements OnInit {
     if (taskIndex > -1) {
       this.tasks[taskIndex] = { ...this.newTask, id: taskId };
       this.saveTasks();
-      this.newTask = { title: '', description: '', category: 'Primary Category' ,status: 'Pending'}; // Reset with default category
+      this.newTask = { title: '', description: '', category: 'Primary Category' ,status: 'Pending',assignedTo:'' }; // Reset with default category
       this.editMode = false;
       this.editTaskId = null;
     }
@@ -220,8 +246,9 @@ export class DashboardComponent implements OnInit {
 
 
   addStatus(): void {
-    if (this.newStatus && !this.status.includes(this.newStatus)) {
-      this.status.push(this.newStatus);
+    const newName = prompt('Enter new Status:');
+    if (newName && !this.status.includes(newName)) {
+      this.status.push(newName);
       this.savestatus();
     }
   }
@@ -265,11 +292,12 @@ export class DashboardComponent implements OnInit {
   }
 
   removeStatus(index: number): void {
-    const columnToRemove = this.status[index];
-    const confirmRemove = confirm(`Are you sure you want to remove the status '${columnToRemove}'?`);
+    const statusToRemove = this.status[index];
+    const confirmRemove = confirm(`Are you sure you want to remove the status '${statusToRemove}'?`);
     if (confirmRemove) {
-      this.taskService.removeStatus(columnToRemove);
-    this.loadStatus();
+      this.status.splice(index, 1);
+      this.savestatus();
+      this.loadStatus();
     }
   }
   getTasksByCategory(category: string): Task[] {

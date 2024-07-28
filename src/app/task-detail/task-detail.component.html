@@ -27,21 +27,32 @@
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
+    
     <mat-form-field appearance="outline">
       <mat-label>Status</mat-label>
-      <input class="input" matInput [matAutocomplete]="autoStatus" id="status" [(ngModel)]="newTask.status" name="status" required>
-      <mat-autocomplete #autoStatus="matAutocomplete">
-        <mat-option *ngFor="let status of filteredStatus | async; let i=index" [value]="status">
+      <mat-select [(ngModel)]="newTask.status" name="status" required>
+        <mat-option *ngFor="let status of filteredStatus | async; let i = index" [value]="status">
           {{ status }}
-          <button *ngIf="!isDefaultStatus(status)" mat-icon-button (click)="removeStatus(i)">
+          <button *ngIf="!isDefaultStatus(status)" mat-icon-button (click)="removeStatus(i); $event.stopPropagation()">
             <mat-icon>remove</mat-icon>
           </button>
         </mat-option>
-      </mat-autocomplete>
+      </mat-select>
       <button mat-icon-button (click)="addStatus()">
         <mat-icon>add</mat-icon>
       </button>
     </mat-form-field>
+    
+
+    <mat-form-field appearance="outline" *ngIf="tester === 'tester'">
+      <mat-label>AssignedTo</mat-label>
+      <mat-select [(ngModel)]="newTask.assignedTo" name="assignedTo" required>
+        <mat-option *ngFor="let assignedTo of filteredAssigned | async" [value]="assignedTo">
+          {{ assignedTo }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
     
     <!-- Dynamically create input fields for new columns -->
     <ng-container *ngFor="let column of additionalColumns; let i=index;">
@@ -110,6 +121,19 @@
             </ng-template>
           </td>
         </ng-container>
+
+               <!-- User Column -->
+               <ng-container *ngIf="tester === 'tester'" matColumnDef="assignedTo">
+                <th mat-header-cell *matHeaderCellDef> AssignedTo </th>
+                <td mat-cell *matCellDef="let task">
+                  <ng-container *ngIf="editTaskId === task.id; else viewModeAssigned">
+                    <input class="input" matInput [(ngModel)]="task.assignedTo" name="assignedTo-{{task.id}}">
+                  </ng-container>
+                  <ng-template #viewModeAssigned>
+                    {{ task.assignedTo }}
+                  </ng-template>
+                </td>
+              </ng-container> 
 
     <!-- Dynamically create columns based on additionalColumns -->
     <ng-container *ngFor="let column of additionalColumns">

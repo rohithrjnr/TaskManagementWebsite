@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field'; // Add this import
 import { MatInputModule } from '@angular/material/input'; // Add this import
@@ -53,6 +54,7 @@ import { RegisterComponent } from './register/register.component';
     DragDropModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    MatSelectModule,
     BaseChartDirective
   ],
   providers: [],

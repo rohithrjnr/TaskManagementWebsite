@@ -3,6 +3,7 @@ import { TaskService, Task } from '../task.service';
 import { FormControl } from '@angular/forms';
 import { startWith, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-task-detail',
@@ -17,15 +18,18 @@ export class TaskDetailComponent implements OnInit {
   additionalColumns: string[] = [];
   newColumnName: string = '';
   showAddColumn: boolean = false;
-  displayedColumns: string[] = ['title', 'description', 'category', 'status', 'actions'];
+  displayedColumns: string[] = ['title', 'description', 'category', 'status','assignedTo', 'actions'];
   categories: string[] = [];
+  assigned: string[] = ['qa','tester','developer'];
   categoryControl = new FormControl();
   filteredCategories!: Observable<string[]>;
   status: string[] = ['Pending', 'Ongoing', 'Completed'];
   statusControl = new FormControl();
+  assignedControl = new FormControl();
   filteredStatus!: Observable<string[]>;
-
-  constructor(private taskService: TaskService) { }
+  filteredAssigned!: Observable<string[]>;
+  tester: any;
+  constructor(private taskService: TaskService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.taskService.getTasks().subscribe(tasks => this.tasks = tasks);
@@ -36,15 +40,23 @@ export class TaskDetailComponent implements OnInit {
     this.loadAdditionalColumns();
     this.loadCategories();
     this.loadStatus();
+    this.loadAssigned();
     this.filteredCategories = this.categoryControl.valueChanges.pipe(
       startWith(''),
       map(value => this.filterCategories(value))
+    );
+
+    this.filteredAssigned = this.assignedControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this.assignUser(value))
     );
 
     this.filteredStatus = this.statusControl.valueChanges.pipe(
       startWith(''),
       map(value => this.filterStatus(value))
     );
+
+    this.tester=this.authService.getCurrentUserType();
   }
 
   loadAdditionalColumns(): void {
@@ -60,11 +72,22 @@ export class TaskDetailComponent implements OnInit {
     this.categories = storedCategories ? JSON.parse(storedCategories) : ['Primary Category']; // Default category
   }
 
+  assignUser(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.assigned.filter(assigned => assigned.toLowerCase().includes(filterValue));
+  }
+
+  loadAssigned(): void {
+    const storedStatus = localStorage.getItem('developers');
+    if (storedStatus) {
+      this.assigned = JSON.parse(storedStatus);
+    }
+  }
+
   filterCategories(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.categories.filter(category => category.toLowerCase().includes(filterValue));
   }
-
   loadStatus(): void {
     const storedStatus = localStorage.getItem('status');
     if (storedStatus) {
@@ -142,7 +165,12 @@ export class TaskDetailComponent implements OnInit {
   }
 
   private updateDisplayedColumns(): void {
+    if(this.tester=="tester"){
+    this.displayedColumns = ['title', 'description', 'category', 'status','assignedTo', ...this.additionalColumns, 'actions'];
+  }else{
     this.displayedColumns = ['title', 'description', 'category', 'status', ...this.additionalColumns, 'actions'];
+
+  }
   }
 
   isDefaultStatus(status: string): boolean {
@@ -168,8 +196,9 @@ export class TaskDetailComponent implements OnInit {
   }
 
   addStatus(): void {
-    if (this.newTask.status && !this.status.includes(this.newTask.status)) {
-      this.status.push(this.newTask.status);
+    const newColumn = prompt('Enter new Status:');
+    if (newColumn && !this.status.includes(newColumn)) {
+      this.status.push(newColumn);
       this.savestatus();
     }
   }

@@ -7,6 +7,7 @@ export interface Task {
   description: string;
   category: string;
   status: string;
+  assignedTo: any;
   [key: string]: any; 
 }
 

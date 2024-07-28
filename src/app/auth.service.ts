@@ -13,6 +13,11 @@ export class AuthService {
     // Store the user data in session storage
     sessionStorage.setItem(username, password);
     localStorage.setItem(username, role);
+
+    // If the role is 'Developer', add the username to the Developer list
+    if (role === 'developer') {
+      this.addDeveloper(username);
+    }
   }
 
   login(username: string, password: string): boolean {
@@ -20,6 +25,10 @@ export class AuthService {
     if (storedPassword === password) {
       this.loggedIn = true;
       this.currentUser = username;
+      const role = localStorage.getItem(username);
+      if (role) {
+        sessionStorage.setItem('currentUserRole', role);
+      }
       return true;
     }
     return false;
@@ -28,6 +37,7 @@ export class AuthService {
   logout(): void {
     this.loggedIn = false;
     this.currentUser = null;
+    sessionStorage.removeItem('currentUserRole');
   }
 
   isLoggedIn(): boolean {
@@ -35,9 +45,21 @@ export class AuthService {
   }
 
   getCurrentUserType(): string | null {
-    if (this.currentUser) {
-      return localStorage.getItem(this.currentUser);
-    }
-    return null;
+    return sessionStorage.getItem('currentUserRole');
   }
+
+  private addDeveloper(username: string): void {
+    // Retrieve the developers from localStorage and parse it as an array
+    let developers = JSON.parse(localStorage.getItem('developers') || '[]');
+    
+    // Check if the username is not already in the array
+    if (!developers.includes(username)) {
+      // Add the username to the array
+      developers.push(username);
+      
+      // Save the updated array back to localStorage
+      localStorage.setItem('developers', JSON.stringify(developers));
+    }
+  }
+  
 }
