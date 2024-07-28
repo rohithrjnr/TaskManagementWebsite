@@ -19,10 +19,13 @@
         <mat-label>Description</mat-label>
         <textarea class="input" matInput [(ngModel)]="newTask.description" placeholder="Task Description"></textarea>
       </mat-form-field>
-      <div *ngFor="let column of additionalColumns">
+      <div *ngFor="let column of additionalColumns;let i = index;">
         <mat-form-field class="task" appearance="fill">
           <mat-label>{{ column | titlecase }}</mat-label>
           <input class="input" matInput [(ngModel)]="newTask[column]" placeholder="{{ column | titlecase }}">
+          <button mat-icon-button (click)="removeColumn(i)">
+            <mat-icon>remove</mat-icon>
+          </button>
         </mat-form-field>
       </div>
       <button mat-icon-button (click)="addNewColumn()">

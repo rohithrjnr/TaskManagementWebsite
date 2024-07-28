@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TaskService } from '../task.service';
 import { ConfirmDeleteDialogComponent } from '../confirm-delete-dialog/confirm-delete-dialog.component';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
@@ -26,11 +27,12 @@ export class DashboardComponent implements OnInit {
   editTaskId: number | null = null;
   newCategoryName: any;
 
-  constructor(public dialog: MatDialog) { }
+  constructor(private taskService: TaskService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loadTasks();
     this.loadCategories();
+    this.taskService.getAdditionalColumns().subscribe(columns => this.additionalColumns = columns);
     this.loadAdditionalColumns();
   }
 
@@ -190,7 +192,17 @@ export class DashboardComponent implements OnInit {
       this.saveAdditionalColumns();
     }
   }
-
+  removeColumn(index: number): void {
+    const columnToRemove = this.additionalColumns[index];
+    const confirmRemove = confirm(`Are you sure you want to remove the column '${columnToRemove}'?`);
+    if (confirmRemove) {
+      this.taskService.removeColumn(columnToRemove);
+      this.tasks.forEach(task => {
+        delete task[columnToRemove];
+      });
+      this.saveTasks();
+    }
+  }
   getTasksByCategory(category: string): Task[] {
     return this.tasks.filter(task => task.category === category);
   }

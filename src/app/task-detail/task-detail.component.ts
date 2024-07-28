@@ -11,51 +11,44 @@ export class TaskDetailComponent implements OnInit {
   newTask: any = { title: '', description: '', category: 'Primary Category' }; // Default category
   editMode: boolean = false;
   editTaskId: number | null = null;
-  displayedColumns: string[] = ['title', 'description', 'category', 'actions'];
+  additionalColumns: string[] = [];
   newColumnName: string = '';
   showAddColumn: boolean = false;
+  displayedColumns: string[] = ['title', 'description', 'category', 'actions'];
 
   constructor(private taskService: TaskService) { }
 
   ngOnInit(): void {
-    this.loadTasks();
+    this.taskService.getTasks().subscribe(tasks => this.tasks = tasks);
+    this.taskService.getAdditionalColumns().subscribe(columns => {
+      this.additionalColumns = columns;
+      this.updateDisplayedColumns();
+    });
+    this.loadAdditionalColumns();
   }
 
-  loadTasks(): void {
-    this.taskService.getTasks().subscribe(tasks => this.tasks = tasks);
+  loadAdditionalColumns(): void {
+    const storedColumns = localStorage.getItem('additionalColumns');
+    if (storedColumns) {
+      this.additionalColumns = JSON.parse(storedColumns);
+      this.updateDisplayedColumns();
+    }
   }
 
   addTask(): void {
     if (this.newTask.title && this.newTask.description) {
-      this.taskService.addTask(this.newTask).subscribe(task => {
-        this.tasks.push(task);
-        this.newTask = { title: '', description: '', category: 'Primary Category' }; // Reset with default category
-        this.resetNewTaskFields();
-      });
+      this.taskService.addTask(this.newTask);
+      this.newTask = { title: '', description: '', category: 'Primary Category' }; // Reset with default category
+      this.updateDisplayedColumns();
+      this.taskService.getTasks().subscribe(tasks => this.tasks = tasks);
     }
   }
 
-  resetNewTaskFields(): void {
-    this.displayedColumns.forEach(column => {
-      if (column !== 'title' && column !== 'description' && column !== 'category' && column !== 'actions') {
-        this.newTask[column] = '';
-      }
-    });
+  saveAdditionalColumns(): void {
+    localStorage.setItem('additionalColumns', JSON.stringify(this.additionalColumns));
+    this.updateDisplayedColumns();
   }
 
-  addColumn(): void {
-    if (this.newColumnName) {
-      this.displayedColumns.splice(this.displayedColumns.length - 1, 0, this.newColumnName); // Add before 'actions'
-      this.tasks.forEach(task => task[this.newColumnName] = ''); // Initialize new column in tasks
-      this.newTask[this.newColumnName] = ''; // Initialize new column in newTask
-      this.newColumnName = '';
-      this.showAddColumn = false;
-    }
-  }
-
-  saveTasks(): void {
-    localStorage.setItem('tasks', JSON.stringify(this.tasks));
-  }
 
   editTask(task: Task | null): void {
     if (task) {
@@ -64,8 +57,11 @@ export class TaskDetailComponent implements OnInit {
     } else {
       this.newTask = { title: '', description: '', category: 'Primary Category' }; // Reset with default category
       this.editTaskId = null;
-      this.resetNewTaskFields();
     }
+  }
+
+  saveTasks(): void {
+    localStorage.setItem('tasks', JSON.stringify(this.tasks));
   }
 
   updateTask(taskId: number): void {
@@ -75,13 +71,37 @@ export class TaskDetailComponent implements OnInit {
       this.saveTasks();
       this.newTask = { title: '', description: '', category: 'Primary Category' }; // Reset with default category
       this.editTaskId = null;
-      this.resetNewTaskFields();
     }
   }
 
   deleteTask(taskId: number): void {
     this.tasks = this.tasks.filter(task => task.id !== taskId);
     this.saveTasks();
-    this.loadTasks();
+  }
+
+  addNewColumn(): void {
+    const newColumn = prompt('Enter new column name:');
+    if (newColumn && !this.additionalColumns.includes(newColumn)) {
+      this.additionalColumns.push(newColumn);
+      this.saveAdditionalColumns();
+    }
+  }
+
+  removeColumn(index: number): void {
+    const columnToRemove = this.additionalColumns[index];
+    const confirmRemove = confirm(`Are you sure you want to remove the column '${columnToRemove}'?`);
+    if (confirmRemove) {
+      this.taskService.removeColumn(columnToRemove);
+      this.tasks.forEach(task => {
+        delete task[columnToRemove];
+      });
+      this.additionalColumns.splice(index, 1);
+      this.saveTasks();
+      this.saveAdditionalColumns();
+    }
+  }
+
+  private updateDisplayedColumns(): void {
+    this.displayedColumns = ['title', 'description', 'category', ...this.additionalColumns, 'actions'];
   }
 }
